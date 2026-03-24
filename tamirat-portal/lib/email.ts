@@ -222,74 +222,64 @@ export async function sendCustomerQuote(req: {
   });
 }
 
-export async function sendWorkshopQuoteAccepted(req: {
+export async function sendQuoteAcceptedCombined(req: {
   ref_number: string;
   customer_company: string;
   customer_name: string;
   service_type: string;
-  priority: string;
-  price: number;
-  request_id: string;
-}) {
-  const link = `${APP_URL}/workshop/request/${req.request_id}`;
-  const priorityLabel = req.priority === 'aog'
-    ? '<span class="badge badge-aog">🔴 AOG</span>'
-    : '<span class="badge badge-routine">🔵 Rutin</span>';
-  const body = `
-    <p>Sayın <strong>${req.service_type}</strong> Atölyesi,</p>
-    <p>Aşağıda detayları verilen teklif müşterimiz tarafından kabul edilmiştir. Parçanın işleme alınması için bilginize sunulur.</p>
-    <div class="info-box">
-      <table>
-        <tr><td>Referans No</td><td><strong>${req.ref_number}</strong></td></tr>
-        <tr><td>Müşteri Firma</td><td>${req.customer_company}</td></tr>
-        <tr><td>Hizmet Türü</td><td>${req.service_type}</td></tr>
-        <tr><td>Öncelik</td><td>${priorityLabel}</td></tr>
-      </table>
-    </div>
-    <p><a href="${link}" class="btn btn-accept">Talebi Görüntüle →</a></p>
-  `;
-  return getResend().emails.send({
-    from: FROM,
-    to: to(WORKSHOP_EMAIL),
-    subject: `[${req.ref_number}] Teklif Kabul Edildi ✓`,
-    html: wrap('Teklif Kabul Bildirimi', body),
-  });
-}
-
-export async function sendKKMWorkOrder(req: {
-  ref_number: string;
-  customer_company: string;
-  service_type: string;
-  customer_name: string;
   priority: string;
   tat_days: number;
   request_id: string;
 }) {
-  const link = `${APP_URL}/kkm/request/${req.request_id}`;
+  const workshopLink = `${APP_URL}/workshop/request/${req.request_id}`;
+  const kkmLink = `${APP_URL}/kkm/request/${req.request_id}`;
   const priorityLabel = req.priority === 'aog'
     ? '<span class="badge badge-aog">🔴 AOG</span>'
     : '<span class="badge badge-routine">🔵 Rutin</span>';
+
+  const detailTable = `
+    <table>
+      <tr><td>Referans No</td><td><strong>${req.ref_number}</strong></td></tr>
+      <tr><td>Müşteri Firma</td><td>${req.customer_company}</td></tr>
+      <tr><td>Hizmet Türü</td><td>${req.service_type}</td></tr>
+      <tr><td>Öncelik</td><td>${priorityLabel}</td></tr>
+      <tr><td>Tahmini TAT</td><td>${req.tat_days} iş günü</td></tr>
+    </table>`;
+
   const body = `
+    <p>Sayın <strong>${req.service_type}</strong> Atölyesi,</p>
+    <p>Aşağıda detayları verilen teklif müşterimiz tarafından kabul edilmiştir. Parçanın işleme alınması için bilginize sunulur.</p>
+    <div class="info-box">${detailTable}</div>
+    <p><a href="${workshopLink}" class="btn btn-accept">Talebi Görüntüle →</a></p>
+
+    <hr style="border:none;border-top:2px dashed #e2e8f0;margin:32px 0;" />
+
     <p>Sayın KKM,</p>
     <p>Aşağıda detayları verilen referansa istinaden iş emri açılması talebi bilginize sunulur.</p>
-    <div class="info-box">
-      <table>
-        <tr><td>Referans No</td><td><strong>${req.ref_number}</strong></td></tr>
-        <tr><td>Müşteri Firma</td><td>${req.customer_company}</td></tr>
-        <tr><td>Hizmet Türü</td><td>${req.service_type}</td></tr>
-        <tr><td>Öncelik</td><td>${priorityLabel}</td></tr>
-        <tr><td>Tahmini TAT</td><td>${req.tat_days} iş günü</td></tr>
-      </table>
-    </div>
-    <p><a href="${link}" class="btn btn-accept">İş Emri Gir →</a></p>
+    <div class="info-box">${detailTable}</div>
+    <p><a href="${kkmLink}" class="btn btn-accept" style="background:#059669">İş Emri Gir →</a></p>
   `;
+
+  const recipients = [...new Set([to(WORKSHOP_EMAIL), to(KKM_EMAIL)])];
+
   return getResend().emails.send({
     from: FROM,
-    to: to(KKM_EMAIL),
-    subject: `[${req.ref_number}] İş Emri Talebi — ${req.customer_company} / ${req.service_type}`,
-    html: wrap('İş Emri Açılması Talebi', body),
+    to: recipients,
+    subject: `[${req.ref_number}] Teklif Kabul Edildi — ${req.customer_company} / ${req.service_type}`,
+    html: wrap('Teklif Kabul & İş Emri Bildirimi', body),
   });
 }
+
+// Keep for backward compatibility
+export async function sendWorkshopQuoteAccepted(req: {
+  ref_number: string; customer_company: string; customer_name: string;
+  service_type: string; priority: string; price: number; request_id: string;
+}) { return sendQuoteAcceptedCombined({ ...req, tat_days: 0 }); }
+
+export async function sendKKMWorkOrder(req: {
+  ref_number: string; customer_company: string; service_type: string;
+  customer_name: string; priority: string; tat_days: number; request_id: string;
+}) { return Promise.resolve(); }
 
 export async function sendBillingNotification(req: {
   ref_number: string;

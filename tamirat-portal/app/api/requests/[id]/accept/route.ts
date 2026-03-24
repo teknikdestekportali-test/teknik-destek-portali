@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { sendWorkshopQuoteAccepted, sendKKMWorkOrder } from '@/lib/email';
+import { sendQuoteAcceptedCombined } from '@/lib/email';
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -23,26 +23,15 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   const evaluation = Array.isArray(requestData.evaluation) ? requestData.evaluation[0] : requestData.evaluation;
 
-  await Promise.allSettled([
-    sendWorkshopQuoteAccepted({
-      ref_number: requestData.ref_number,
-      customer_company: requestData.customer_company,
-      customer_name: requestData.customer_name,
-      service_type: requestData.service_type,
-      priority: requestData.priority,
-      price: evaluation?.price ?? 0,
-      request_id: id,
-    }),
-    sendKKMWorkOrder({
-      ref_number: requestData.ref_number,
-      customer_company: requestData.customer_company,
-      service_type: requestData.service_type,
-      customer_name: requestData.customer_name,
-      priority: requestData.priority,
-      tat_days: evaluation?.tat_days ?? 0,
-      request_id: id,
-    }),
-  ]);
+  await sendQuoteAcceptedCombined({
+    ref_number: requestData.ref_number,
+    customer_company: requestData.customer_company,
+    customer_name: requestData.customer_name,
+    service_type: requestData.service_type,
+    priority: requestData.priority,
+    tat_days: evaluation?.tat_days ?? 0,
+    request_id: id,
+  });
 
   return NextResponse.json({ success: true });
 }
