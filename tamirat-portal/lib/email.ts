@@ -10,6 +10,11 @@ const WORKSHOP_EMAIL = process.env.WORKSHOP_EMAIL ?? 'atolye@demo.com';
 const KKM_EMAIL = process.env.KKM_EMAIL ?? 'kkm@demo.com';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 
+// Tüm mailleri tek adrese yönlendir (demo/test modu)
+function to(address: string): string {
+  return process.env.OVERRIDE_RECIPIENT ?? address;
+}
+
 function wrap(title: string, body: string): string {
   return `<!DOCTYPE html>
 <html lang="tr">
@@ -89,7 +94,7 @@ export async function sendCustomerConfirmation(req: {
   `;
   return getResend().emails.send({
     from: FROM,
-    to: req.customer_email,
+    to: to(req.customer_email),
     subject: `[${req.ref_number}] Talebiniz Alındı`,
     html: wrap('Talep Onayı', body),
   });
@@ -113,7 +118,7 @@ export async function sendWorkshopNewRequest(req: {
   `;
   return getResend().emails.send({
     from: FROM,
-    to: WORKSHOP_EMAIL,
+    to: to(WORKSHOP_EMAIL),
     subject: `[${req.ref_number}] Yeni Hizmet Talebi — ${req.customer_company} / ${req.service_type}`,
     html: wrap('Yeni Talep Bildirimi', body),
   });
@@ -136,7 +141,7 @@ export async function sendCustomerRejected(req: {
   `;
   return getResend().emails.send({
     from: FROM,
-    to: req.customer_email,
+    to: to(req.customer_email),
     subject: `[${req.ref_number}] Talep Sonucu Hakkında`,
     html: wrap('Talep Güncelleme', body),
   });
@@ -163,7 +168,7 @@ export async function sendCustomerInfoRequest(req: {
   `;
   return getResend().emails.send({
     from: FROM,
-    to: req.customer_email,
+    to: to(req.customer_email),
     subject: `[${req.ref_number}] Ek Bilgi/Belge Talebi`,
     html: wrap('Ek Bilgi Gerekli', body),
   });
@@ -209,7 +214,7 @@ export async function sendCustomerQuote(req: {
   `;
   return getResend().emails.send({
     from: FROM,
-    to: req.customer_email,
+    to: to(req.customer_email),
     subject: `[${req.ref_number}] Fiyat Teklifiniz Hazır — ${req.price.toLocaleString('tr-TR')} ₺`,
     html: wrap('Fiyat Teklifi', body),
   });
@@ -239,7 +244,7 @@ export async function sendWorkshopQuoteAccepted(req: {
   `;
   return getResend().emails.send({
     from: FROM,
-    to: WORKSHOP_EMAIL,
+    to: to(WORKSHOP_EMAIL),
     subject: `[${req.ref_number}] Teklif Kabul Edildi ✓`,
     html: wrap('Teklif Kabul Bildirimi', body),
   });
@@ -270,7 +275,7 @@ export async function sendKKMWorkOrder(req: {
   `;
   return getResend().emails.send({
     from: FROM,
-    to: KKM_EMAIL,
+    to: to(KKM_EMAIL),
     subject: `[${req.ref_number}] İş Emri Talebi — ${req.customer_company} / ${req.service_type}`,
     html: wrap('İş Emri Açılması Talebi', body),
   });
@@ -294,7 +299,7 @@ export async function sendWorkshopQuoteRejected(req: {
   `;
   return getResend().emails.send({
     from: FROM,
-    to: WORKSHOP_EMAIL,
+    to: to(WORKSHOP_EMAIL),
     subject: `[${req.ref_number}] Teklif Reddedildi`,
     html: wrap('Teklif Red Bildirimi', body),
   });
@@ -320,7 +325,7 @@ export async function sendWorkshopInfoResponse(req: {
   `;
   return getResend().emails.send({
     from: FROM,
-    to: WORKSHOP_EMAIL,
+    to: to(WORKSHOP_EMAIL),
     subject: `[${req.ref_number}] Müşteri Yanıtı Alındı`,
     html: wrap('Müşteri Yanıtı', body),
   });
