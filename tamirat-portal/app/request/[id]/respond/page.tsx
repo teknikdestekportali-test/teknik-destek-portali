@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { use, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { ServiceRequest } from '@/types';
 
@@ -12,6 +12,8 @@ export default function CustomerRespondPage({ params }: { params: Promise<{ id: 
   const [submitting, setSubmitting] = useState(false);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
+  const [files, setFiles] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetch(`/api/requests/${id}`)
@@ -33,6 +35,15 @@ export default function CustomerRespondPage({ params }: { params: Promise<{ id: 
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
+
+      for (const file of files) {
+        const fd = new FormData();
+        fd.append('file', file);
+        fd.append('requestId', id);
+        fd.append('uploadedBy', 'customer');
+        await fetch('/api/upload', { method: 'POST', body: fd });
+      }
+
       router.push(`/request/${id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Bir hata oluştu.');
@@ -96,6 +107,32 @@ export default function CustomerRespondPage({ params }: { params: Promise<{ id: 
               placeholder="Eksik bilgi veya belge hakkında yanıtınızı yazınız..."
               className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none mb-4"
             />
+
+            {/* File upload */}
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all mb-4"
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
+                className="hidden"
+                onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+              />
+              <p className="text-sm text-slate-500">📎 Belge eklemek için tıklayın <span className="text-slate-400">(isteğe bağlı)</span></p>
+            </div>
+            {files.length > 0 && (
+              <div className="mb-4 space-y-1">
+                {files.map((f, i) => (
+                  <div key={i} className="flex items-center justify-between bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
+                    <span className="text-xs text-blue-800 truncate">📄 {f.name}</span>
+                    <button type="button" onClick={() => setFiles(files.filter((_, j) => j !== i))} className="text-slate-400 hover:text-red-500 ml-2 text-xs">✕</button>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
 

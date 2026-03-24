@@ -26,6 +26,12 @@ export default async function WorkshopRequestDetailPage({ params }: { params: Pr
   const evaluation = Array.isArray(request.evaluation) ? request.evaluation[0] : request.evaluation;
   const responses = request.customer_responses ?? [];
 
+  const { data: docs } = await supabaseAdmin
+    .from('documents')
+    .select('*')
+    .eq('request_id', id)
+    .order('created_at', { ascending: true });
+
   const canEvaluate = ['pending', 'reviewing', 'info_requested'].includes(request.status);
 
   return (
@@ -94,6 +100,35 @@ export default async function WorkshopRequestDetailPage({ params }: { params: Pr
                 </div>
               </div>
             </div>
+
+            {/* Documents */}
+            {docs && docs.length > 0 && (
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <div className="px-6 py-4 border-b border-slate-100">
+                  <h2 className="font-semibold text-slate-800">Yüklenen Belgeler</h2>
+                </div>
+                <div className="p-6 space-y-2">
+                  {docs.map((doc: { id: string; filename: string; file_url: string; uploaded_by: string; created_at: string }) => (
+                    <a
+                      key={doc.id}
+                      href={doc.file_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 hover:bg-blue-50 hover:border-blue-200 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">📄</span>
+                        <div>
+                          <p className="text-sm font-medium text-slate-800">{doc.filename}</p>
+                          <p className="text-xs text-slate-400">{doc.uploaded_by === 'customer' ? 'Müşteri' : 'Atölye'} • {new Date(doc.created_at).toLocaleString('tr-TR')}</p>
+                        </div>
+                      </div>
+                      <span className="text-blue-500 text-xs font-medium">İndir →</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Customer responses */}
             {responses.length > 0 && (

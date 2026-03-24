@@ -136,15 +136,9 @@ export default function EvaluationForm({ requestId, priority }: Props) {
               />
             </div>
 
-            {/* Live price preview */}
+            {/* Price is calculated server-side and sent to customer via email */}
             {estimatedPrice !== null && (
-              <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                <p className="text-xs text-slate-500 mb-1">Hesaplanan Teklif</p>
-                <p className="text-2xl font-bold text-green-700">{estimatedPrice.toLocaleString('tr-TR')} ₺</p>
-                <p className="text-xs text-slate-400 mt-1">
-                  ({man_hours}s × {HOURLY_RATE}₺) + {HANDLING_FEE}₺{isAOG ? ' × 1.5 (AOG)' : ''}
-                </p>
-              </div>
+              <p className="text-xs text-slate-400 italic">Teklif fiyatı hesaplanacak ve müşteriye mail ile iletilecektir.</p>
             )}
           </div>
         )}

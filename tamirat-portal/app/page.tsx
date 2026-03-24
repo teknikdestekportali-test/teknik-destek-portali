@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { CUSTOMER_COMPANIES, SERVICE_TYPES } from '@/types';
 
 type Step = 'form' | 'success';
@@ -10,6 +10,8 @@ export default function CustomerRequestPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [refNumber, setRefNumber] = useState('');
+  const [files, setFiles] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
     customer_company: '',
@@ -36,6 +38,16 @@ export default function CustomerRequestPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Bir hata oluştu.');
+
+      // Upload files if any
+      for (const file of files) {
+        const fd = new FormData();
+        fd.append('file', file);
+        fd.append('requestId', data.id);
+        fd.append('uploadedBy', 'customer');
+        await fetch('/api/upload', { method: 'POST', body: fd });
+      }
+
       setRefNumber(data.ref_number);
       setStep('success');
     } catch (err) {
@@ -182,10 +194,44 @@ export default function CustomerRequestPage() {
             </div>
           </div>
 
-          {/* Section 3 */}
-          <div className="px-8 py-6">
+          {/* Section 3 - Documents */}
+          <div className="px-8 py-6 border-b border-slate-100">
             <h3 className="font-semibold text-slate-700 mb-5 flex items-center gap-2">
               <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+              Belge / Doküman <span className="text-slate-400 text-xs font-normal">(isteğe bağlı)</span>
+            </h3>
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all"
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
+                className="hidden"
+                onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+              />
+              <p className="text-2xl mb-2">📎</p>
+              <p className="text-sm font-medium text-slate-600">Dosya seçmek için tıklayın</p>
+              <p className="text-xs text-slate-400 mt-1">PDF, Word, Excel, görsel — maks. 10MB/dosya</p>
+            </div>
+            {files.length > 0 && (
+              <div className="mt-3 space-y-2">
+                {files.map((f, i) => (
+                  <div key={i} className="flex items-center justify-between bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
+                    <span className="text-sm text-blue-800 truncate">📄 {f.name}</span>
+                    <button type="button" onClick={() => setFiles(files.filter((_, j) => j !== i))} className="text-slate-400 hover:text-red-500 ml-2 text-xs">✕</button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Section 4 */}
+          <div className="px-8 py-6">
+            <h3 className="font-semibold text-slate-700 mb-5 flex items-center gap-2">
+              <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">4</span>
               Öncelik
             </h3>
             <div className="grid grid-cols-2 gap-4">

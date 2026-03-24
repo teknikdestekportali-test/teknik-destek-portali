@@ -39,13 +39,24 @@ create table if not exists customer_responses (
   created_at timestamptz default now()
 );
 
+create table if not exists documents (
+  id uuid primary key default gen_random_uuid(),
+  request_id uuid references requests(id) on delete cascade,
+  filename text not null,
+  file_url text not null,
+  uploaded_by text not null default 'customer',
+  created_at timestamptz default now()
+);
+
 -- Index for faster lookups
 create index if not exists idx_requests_status on requests(status);
 create index if not exists idx_requests_created_at on requests(created_at desc);
 create index if not exists idx_evaluations_request_id on evaluations(request_id);
 create index if not exists idx_responses_request_id on customer_responses(request_id);
+create index if not exists idx_documents_request_id on documents(request_id);
 
 -- Row Level Security: servis key bypass eder, demo icin RLS kapali
 alter table requests disable row level security;
 alter table evaluations disable row level security;
 alter table customer_responses disable row level security;
+alter table documents disable row level security;
