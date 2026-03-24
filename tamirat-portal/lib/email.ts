@@ -187,7 +187,6 @@ export async function sendCustomerQuote(req: {
   price: number;
   request_id: string;
 }) {
-  const breakdown = priceBreakdown(req.man_hours, req.priority === 'aog');
   const acceptLink = `${APP_URL}/request/${req.request_id}?action=accept`;
   const rejectLink = `${APP_URL}/request/${req.request_id}?action=reject`;
 
@@ -198,12 +197,15 @@ export async function sendCustomerQuote(req: {
     <div class="price-box">
       <p style="margin:0 0 12px;font-weight:600;color:#15803d">Fiyat Teklifi</p>
       <table>
-        <tr><td style="color:#64748b;width:200px">İşçilik (${req.man_hours} s × ${breakdown.hourlyRate}₺)</td><td>${breakdown.base.toLocaleString('tr-TR')} ₺</td></tr>
-        <tr><td style="color:#64748b">İlgilenme Bedeli</td><td>${breakdown.handling.toLocaleString('tr-TR')} ₺</td></tr>
-        ${req.priority === 'aog' ? `<tr><td style="color:#dc2626">AOG Katsayısı</td><td>× ${breakdown.multiplier}</td></tr>` : ''}
-        <tr style="border-top:1px solid #86efac"><td style="font-weight:700;padding-top:8px">Toplam Teklif</td><td class="price-total">${req.price.toLocaleString('tr-TR')} ₺</td></tr>
+        <tr style="border-top:1px solid #86efac">
+          <td style="font-weight:700;padding-top:8px">Teklif Tutarı</td>
+          <td class="price-total">${req.price.toLocaleString('en-US')} USD</td>
+        </tr>
+        <tr>
+          <td style="color:#64748b;padding-top:8px">Tahmini Teslim Süresi (TAT)</td>
+          <td style="font-weight:600;padding-top:8px">${req.tat_days} iş günü</td>
+        </tr>
       </table>
-      <p style="margin:12px 0 0;color:#64748b;font-size:13px">Tahmini Teslim Süresi (TAT): <strong>${req.tat_days} iş günü</strong></p>
     </div>
     <p>Teklife yanıt vermek için aşağıdaki butonları kullanabilirsiniz:</p>
     <p>
@@ -215,7 +217,7 @@ export async function sendCustomerQuote(req: {
   return getResend().emails.send({
     from: FROM,
     to: to(req.customer_email),
-    subject: `[${req.ref_number}] Fiyat Teklifiniz Hazır — ${req.price.toLocaleString('tr-TR')} ₺`,
+    subject: `[${req.ref_number}] Fiyat Teklifiniz Hazır — ${req.price.toLocaleString('en-US')} USD`,
     html: wrap('Fiyat Teklifi', body),
   });
 }

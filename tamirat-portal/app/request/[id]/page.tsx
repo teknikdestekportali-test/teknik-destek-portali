@@ -138,7 +138,7 @@ export default function CustomerRequestStatusPage({ params }: { params: Promise<
                 </div>
                 <div>
                   <dt className="text-slate-500 mb-0.5">Teklif Fiyatı</dt>
-                  <dd className="text-2xl font-bold text-green-600">{evaluation.price?.toLocaleString('tr-TR')} ₺</dd>
+                  <dd className="text-2xl font-bold text-green-600">{evaluation.price?.toLocaleString('en-US')} USD</dd>
                 </div>
               </dl>
 
