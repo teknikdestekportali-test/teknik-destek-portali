@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { isValidKKMSession, KKM_SESSION_COOKIE } from '@/lib/kkm-auth';
-import { sendBillingNotification } from '@/lib/email';
+import { sendBillingNotification, sendWorkshopWorkOrderNotification } from '@/lib/email';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = req.cookies.get(KKM_SESSION_COOKIE);
@@ -37,11 +37,19 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   const evaluation = Array.isArray(requestData.evaluation) ? requestData.evaluation[0] : requestData.evaluation;
 
-  await sendBillingNotification({
-    ref_number: requestData.ref_number,
-    work_order_number,
-    price: evaluation?.price ?? 0,
-  });
+  await Promise.allSettled([
+    sendWorkshopWorkOrderNotification({
+      ref_number: requestData.ref_number,
+      work_order_number,
+      service_type: requestData.service_type,
+      request_id: id,
+    }),
+    sendBillingNotification({
+      ref_number: requestData.ref_number,
+      work_order_number,
+      price: evaluation?.price ?? 0,
+    }),
+  ]);
 
   return NextResponse.json({ success: true });
 }

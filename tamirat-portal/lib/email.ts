@@ -281,6 +281,37 @@ export async function sendKKMWorkOrder(req: {
   customer_name: string; priority: string; tat_days: number; request_id: string;
 }) { return Promise.resolve(); }
 
+export async function sendWorkshopWorkOrderNotification(req: {
+  ref_number: string;
+  work_order_number: string;
+  service_type: string;
+  request_id: string;
+}) {
+  const link = `${APP_URL}/workshop/request/${req.request_id}`;
+  const body = `
+    <p>Sayın Atölyemiz,</p>
+    <p>
+      <strong>${req.ref_number}</strong> numaralı talebe istinaden 
+      <strong>${req.work_order_number}</strong> numaralı iş emri açılmıştır. 
+      Hizmete başlanabilir.
+    </p>
+    <div class="info-box">
+      <table>
+        <tr><td>Talep Referansı</td><td><strong>${req.ref_number}</strong></td></tr>
+        <tr><td>İş Emri No</td><td><strong>${req.work_order_number}</strong></td></tr>
+        <tr><td>Hizmet Türü</td><td>${req.service_type}</td></tr>
+      </table>
+    </div>
+    <p><a href="${link}" class="btn btn-accept">Talebi Görüntüle →</a></p>
+  `;
+  return getResend().emails.send({
+    from: FROM,
+    to: to(WORKSHOP_EMAIL),
+    subject: `[${req.ref_number}] İş Emri Açıldı — ${req.work_order_number}`,
+    html: wrap('İş Emri Bildirimi', body),
+  });
+}
+
 export async function sendBillingNotification(req: {
   ref_number: string;
   work_order_number: string;
