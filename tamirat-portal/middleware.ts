@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const SESSION_COOKIE = 'workshop_session';
+const KKM_SESSION_COOKIE = 'kkm_session';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -12,9 +13,16 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  if (pathname.startsWith('/kkm') && !pathname.startsWith('/kkm/login')) {
+    const session = request.cookies.get(KKM_SESSION_COOKIE);
+    if (!session?.value) {
+      return NextResponse.redirect(new URL('/kkm/login', request.url));
+    }
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/workshop/:path*'],
+  matcher: ['/workshop/:path*', '/kkm/:path*'],
 };

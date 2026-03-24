@@ -225,19 +225,23 @@ export async function sendWorkshopQuoteAccepted(req: {
   customer_company: string;
   customer_name: string;
   service_type: string;
+  priority: string;
   price: number;
   request_id: string;
 }) {
   const link = `${APP_URL}/workshop/request/${req.request_id}`;
+  const priorityLabel = req.priority === 'aog'
+    ? '<span class="badge badge-aog">🔴 AOG</span>'
+    : '<span class="badge badge-routine">🔵 Rutin</span>';
   const body = `
-    <p><strong>${req.customer_company}</strong> firmasının <strong>${req.ref_number}</strong> referanslı teklifi kabul edilmiştir.</p>
+    <p>Sayın <strong>${req.service_type}</strong> Atölyesi,</p>
+    <p>Aşağıda detayları verilen teklif müşterimiz tarafından kabul edilmiştir. Parçanın işleme alınması için bilginize sunulur.</p>
     <div class="info-box">
       <table>
-        <tr><td>Referans No</td><td>${req.ref_number}</td></tr>
-        <tr><td>Firma</td><td>${req.customer_company}</td></tr>
-        <tr><td>Talep Eden</td><td>${req.customer_name}</td></tr>
-        <tr><td>Hizmet</td><td>${req.service_type}</td></tr>
-        <tr><td>Kabul Edilen Fiyat</td><td><strong>${req.price.toLocaleString('tr-TR')} ₺</strong></td></tr>
+        <tr><td>Referans No</td><td><strong>${req.ref_number}</strong></td></tr>
+        <tr><td>Müşteri Firma</td><td>${req.customer_company}</td></tr>
+        <tr><td>Hizmet Türü</td><td>${req.service_type}</td></tr>
+        <tr><td>Öncelik</td><td>${priorityLabel}</td></tr>
       </table>
     </div>
     <p><a href="${link}" class="btn btn-accept">Talebi Görüntüle →</a></p>
@@ -255,29 +259,63 @@ export async function sendKKMWorkOrder(req: {
   customer_company: string;
   service_type: string;
   customer_name: string;
-  price: number;
+  priority: string;
   tat_days: number;
+  request_id: string;
 }) {
+  const link = `${APP_URL}/kkm/request/${req.request_id}`;
+  const priorityLabel = req.priority === 'aog'
+    ? '<span class="badge badge-aog">🔴 AOG</span>'
+    : '<span class="badge badge-routine">🔵 Rutin</span>';
   const body = `
     <p>Sayın KKM,</p>
-    <p>Aşağıdaki hizmet talebi için müşteri teklifi kabul etmiştir. İş emri açılması için bilgilerinize sunulur.</p>
+    <p>Aşağıda detayları verilen referansa istinaden iş emri açılması talebi bilginize sunulur.</p>
     <div class="info-box">
       <table>
         <tr><td>Referans No</td><td><strong>${req.ref_number}</strong></td></tr>
-        <tr><td>Firma</td><td>${req.customer_company}</td></tr>
-        <tr><td>Talep Eden</td><td>${req.customer_name}</td></tr>
+        <tr><td>Müşteri Firma</td><td>${req.customer_company}</td></tr>
         <tr><td>Hizmet Türü</td><td>${req.service_type}</td></tr>
-        <tr><td>Kabul Edilen Fiyat</td><td>${req.price.toLocaleString('tr-TR')} ₺</td></tr>
+        <tr><td>Öncelik</td><td>${priorityLabel}</td></tr>
         <tr><td>Tahmini TAT</td><td>${req.tat_days} iş günü</td></tr>
       </table>
     </div>
-    <p><strong>${req.ref_number}</strong> referansına istinaden iş emri açabilir misiniz?</p>
+    <p><a href="${link}" class="btn btn-accept">İş Emri Gir →</a></p>
   `;
   return getResend().emails.send({
     from: FROM,
     to: to(KKM_EMAIL),
     subject: `[${req.ref_number}] İş Emri Talebi — ${req.customer_company} / ${req.service_type}`,
     html: wrap('İş Emri Açılması Talebi', body),
+  });
+}
+
+export async function sendBillingNotification(req: {
+  ref_number: string;
+  work_order_number: string;
+  price: number;
+}) {
+  const BILLING_EMAIL = process.env.BILLING_EMAIL ?? process.env.KKM_EMAIL ?? 'billing@demo.com';
+  const body = `
+    <p>Sayın Faturalama Yetkilisi,</p>
+    <p>
+      <strong>${req.ref_number}</strong> referanslı hizmet talebine istinaden 
+      <strong>${req.work_order_number}</strong> numaralı iş emri açılmıştır. 
+      İş emrinin kapanmasını takiben müşterimize 
+      <strong>${req.price.toLocaleString('tr-TR')} USD</strong> tutarında fatura kesilmesi için bilginize arz ederiz.
+    </p>
+    <div class="info-box">
+      <table>
+        <tr><td>Talep Referansı</td><td><strong>${req.ref_number}</strong></td></tr>
+        <tr><td>İş Emri No</td><td><strong>${req.work_order_number}</strong></td></tr>
+        <tr><td>Fatura Tutarı</td><td><strong>${req.price.toLocaleString('tr-TR')} USD</strong></td></tr>
+      </table>
+    </div>
+  `;
+  return getResend().emails.send({
+    from: FROM,
+    to: to(BILLING_EMAIL),
+    subject: `[${req.ref_number}] Faturalama Bildirimi — İş Emri ${req.work_order_number}`,
+    html: wrap('Faturalama Bildirimi', body),
   });
 }
 

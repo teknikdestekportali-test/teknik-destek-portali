@@ -29,6 +29,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       customer_company: requestData.customer_company,
       customer_name: requestData.customer_name,
       service_type: requestData.service_type,
+      priority: requestData.priority,
       price: evaluation?.price ?? 0,
       request_id: id,
     }),
@@ -37,8 +38,9 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       customer_company: requestData.customer_company,
       service_type: requestData.service_type,
       customer_name: requestData.customer_name,
-      price: evaluation?.price ?? 0,
+      priority: requestData.priority,
       tat_days: evaluation?.tat_days ?? 0,
+      request_id: id,
     }),
   ]);
 

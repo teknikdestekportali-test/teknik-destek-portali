@@ -6,7 +6,8 @@ export type RequestStatus =
   | 'quoted'
   | 'accepted'
   | 'rejected_by_customer'
-  | 'work_order';
+  | 'work_order'
+  | 'invoicing';
 
 export type ServiceType = 'NDT' | 'Kaplama' | 'Hangar Teçhizat' | 'Isıl İşlem-Kaynak';
 export type Priority = 'routine' | 'aog';
@@ -20,7 +21,8 @@ export const STATUS_LABELS: Record<RequestStatus, string> = {
   quoted: 'Teklif Gönderildi',
   accepted: 'Kabul Edildi',
   rejected_by_customer: 'Müşteri Reddetti',
-  work_order: 'İş Emri Açıldı',
+  work_order: 'İş Emri Bekleniyor',
+  invoicing: 'Faturalama',
 };
 
 export const STATUS_COLORS: Record<RequestStatus, string> = {
@@ -32,6 +34,7 @@ export const STATUS_COLORS: Record<RequestStatus, string> = {
   accepted: 'bg-green-100 text-green-800',
   rejected_by_customer: 'bg-gray-100 text-gray-800',
   work_order: 'bg-emerald-100 text-emerald-800',
+  invoicing: 'bg-teal-100 text-teal-800',
 };
 
 export const SERVICE_TYPES: ServiceType[] = [
