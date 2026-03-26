@@ -60,7 +60,7 @@ export default function CustomerRequestStatusPage({ params }: { params: Promise<
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-blue-500 rounded-lg flex items-center justify-center text-lg">✈</div>
             <div>
-              <h1 className="font-bold">Tamirat Talep Portalı</h1>
+              <h1 className="font-bold">Teknik Destek Talep Portalı</h1>
               <p className="text-slate-400 text-xs">Talep Durumu</p>
             </div>
           </div>
@@ -129,10 +129,6 @@ export default function CustomerRequestStatusPage({ params }: { params: Promise<
             <div className="p-6">
               <dl className="grid grid-cols-2 gap-4 text-sm mb-6">
                 <div>
-                  <dt className="text-slate-500 mb-0.5">Adam-Saat</dt>
-                  <dd className="font-semibold">{evaluation.man_hours} saat</dd>
-                </div>
-                <div>
                   <dt className="text-slate-500 mb-0.5">Tahmini TAT</dt>
                   <dd className="font-semibold">{evaluation.tat_days} iş günü</dd>
                 </div>
@@ -199,13 +195,19 @@ function StatusStepper({ status }: { status: string }) {
     { key: 'work_order', label: 'İş Emri' },
   ];
 
-  const terminalSteps: Record<string, number> = {
-    rejected: 1,
+  const statusIndex: Record<string, number> = {
+    pending: 0,
+    reviewing: 1,
     info_requested: 1,
+    rejected: 1,
+    quoted: 2,
+    accepted: 3,
     rejected_by_customer: 2,
+    work_order: 3,
+    invoicing: 3,
   };
 
-  const activeIndex = terminalSteps[status] ?? steps.findIndex((s) => s.key === status);
+  const activeIndex = statusIndex[status] ?? 0;
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-6">

@@ -92,8 +92,8 @@ export default function CustomerRequestPage() {
         <div className="max-w-5xl mx-auto px-6 py-5 flex items-center gap-4">
           <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-xl font-bold">✈</div>
           <div>
-            <h1 className="font-bold text-lg leading-tight">Tamirat Talep Portalı</h1>
-            <p className="text-slate-400 text-xs">MRO Hizmet Talep Yönetim Sistemi</p>
+          <h1 className="font-bold text-lg leading-tight">Teknik Destek Talep Portalı</h1>
+          <p className="text-slate-400 text-xs">MRO Hizmet Talep Yönetim Sistemi</p>
           </div>
           <div className="ml-auto">
             <a href="/workshop/login" className="text-xs text-slate-400 hover:text-white transition-colors">
@@ -106,7 +106,7 @@ export default function CustomerRequestPage() {
       <main className="max-w-2xl mx-auto px-6 py-10">
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-slate-900">Hizmet Talebi Oluştur</h2>
-          <p className="text-slate-500 mt-1">Aşağıdaki formu eksiksiz doldurunuz. Talebiniz ilgili atölye tarafından en kısa sürede değerlendirilecektir.</p>
+          <p className="text-slate-500 mt-1">Aşağıdaki formu eksiksiz doldurunuz. Talebiniz ilgili yetkili tarafından en kısa sürede değerlendirilecektir.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -245,8 +245,8 @@ export default function CustomerRequestPage() {
               <label className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${form.priority === 'aog' ? 'border-red-500 bg-red-50' : 'border-slate-200 hover:border-slate-300'}`}>
                 <input type="radio" name="priority" value="aog" checked={form.priority === 'aog'} onChange={handleChange} className="mt-0.5" />
                 <div>
-                  <p className="font-semibold text-red-700 text-sm">AOG <span className="text-xs font-normal text-red-500">(Aircraft on Ground)</span></p>
-                  <p className="text-xs text-slate-500 mt-0.5">Acil talep — ×1.5 katsayı uygulanır</p>
+                  <p className="font-semibold text-red-700 text-sm">AOG</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Acil talep – Fiyatlamada x 1,5 katsayı uygulanır</p>
                 </div>
               </label>
             </div>

@@ -155,7 +155,7 @@ export default async function WorkshopRequestDetailPage({ params }: { params: Pr
                 </div>
                 <div className="p-6 text-sm">
                   {evaluation.action === 'quoted' && (
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 gap-4">
                       <div className="bg-slate-50 rounded-xl p-4 text-center">
                         <p className="text-xs text-slate-500 mb-1">Adam-Saat</p>
                         <p className="text-xl font-bold text-slate-800">{evaluation.man_hours}</p>
@@ -163,10 +163,6 @@ export default async function WorkshopRequestDetailPage({ params }: { params: Pr
                       <div className="bg-slate-50 rounded-xl p-4 text-center">
                         <p className="text-xs text-slate-500 mb-1">TAT (gün)</p>
                         <p className="text-xl font-bold text-slate-800">{evaluation.tat_days}</p>
-                      </div>
-                      <div className="bg-green-50 rounded-xl p-4 text-center">
-                        <p className="text-xs text-slate-500 mb-1">Teklif</p>
-                        <p className="text-xl font-bold text-green-700">{evaluation.price?.toLocaleString('tr-TR')} ₺</p>
                       </div>
                     </div>
                   )}

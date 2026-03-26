@@ -42,7 +42,7 @@ export default function WorkOrderForm({ requestId }: { requestId: string }) {
           value={workOrderNumber}
           onChange={(e) => setWorkOrderNumber(e.target.value)}
           required
-          placeholder="ör: WO-2024-0123"
+                placeholder="ör: 3403180"
           className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
       </div>
@@ -52,11 +52,8 @@ export default function WorkOrderForm({ requestId }: { requestId: string }) {
         disabled={loading || !workOrderNumber.trim()}
         className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
       >
-        {loading ? 'İşleniyor...' : 'Onayla ve Faturalama Ekibine Bildir →'}
+        {loading ? 'İşleniyor...' : 'Onayla →'}
       </button>
-      <p className="text-xs text-slate-400 mt-3 text-center">
-        Onaylandığında faturalama ekibine otomatik mail gidecektir.
-      </p>
     </form>
   );
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { isValidKKMSession, KKM_SESSION_COOKIE } from '@/lib/kkm-auth';
-import { sendBillingNotification, sendWorkshopWorkOrderNotification } from '@/lib/email';
+import { sendBillingNotification, sendWorkshopWorkOrderNotification, sendCustomerWorkOrderOpened } from '@/lib/email';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = req.cookies.get(KKM_SESSION_COOKIE);
@@ -48,6 +48,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       ref_number: requestData.ref_number,
       work_order_number,
       price: evaluation?.price ?? 0,
+    }),
+    sendCustomerWorkOrderOpened({
+      customer_email: requestData.customer_email,
+      customer_name: requestData.customer_name,
+      ref_number: requestData.ref_number,
     }),
   ]);
 

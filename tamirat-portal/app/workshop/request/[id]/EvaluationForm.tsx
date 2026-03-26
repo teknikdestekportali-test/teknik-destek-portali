@@ -66,8 +66,8 @@ export default function EvaluationForm({ requestId, priority }: Props) {
         {/* Action selector */}
         <div className="space-y-2 mb-5">
           {([
-            { key: 'quoted', label: '✓ Teklif Ver', color: 'border-green-500 bg-green-50 text-green-800', inactive: 'border-slate-200 hover:border-slate-300' },
-            { key: 'info_requested', label: '? Bilgi İste', color: 'border-orange-500 bg-orange-50 text-orange-800', inactive: 'border-slate-200 hover:border-slate-300' },
+            { key: 'quoted', label: '✓ Değerlendirmeyi Paylaş', color: 'border-green-500 bg-green-50 text-green-800', inactive: 'border-slate-200 hover:border-slate-300' },
+            { key: 'info_requested', label: '? Ek Bilgi İste', color: 'border-orange-500 bg-orange-50 text-orange-800', inactive: 'border-slate-200 hover:border-slate-300' },
             { key: 'rejected', label: '✗ Reddet', color: 'border-red-500 bg-red-50 text-red-800', inactive: 'border-slate-200 hover:border-slate-300' },
           ] as const).map((opt) => (
             <button
@@ -136,10 +136,6 @@ export default function EvaluationForm({ requestId, priority }: Props) {
               />
             </div>
 
-            {/* Price is calculated server-side and sent to customer via email */}
-            {estimatedPrice !== null && (
-              <p className="text-xs text-slate-400 italic">Teklif fiyatı hesaplanacak ve müşteriye mail ile iletilecektir.</p>
-            )}
           </div>
         )}
 

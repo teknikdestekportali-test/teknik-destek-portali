@@ -36,7 +36,7 @@ export default function WorkshopLoginPage() {
         <div className="text-center mb-8">
           <div className="w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">✈</div>
           <h1 className="text-2xl font-bold text-white">Atölye Girişi</h1>
-          <p className="text-slate-400 text-sm mt-1">Tamirat Talep Portalı</p>
+          <p className="text-slate-400 text-sm mt-1">Teknik Destek Talep Portalı</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-2xl p-8">

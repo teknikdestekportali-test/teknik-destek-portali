@@ -36,7 +36,7 @@ export default async function WorkshopDashboardPage() {
             <div className="w-9 h-9 bg-blue-500 rounded-lg flex items-center justify-center text-lg">✈</div>
             <div>
               <h1 className="font-bold text-sm">Atölye Paneli</h1>
-              <p className="text-slate-400 text-xs">Tamirat Talep Portalı</p>
+              <p className="text-slate-400 text-xs">Teknik Destek Talep Portalı</p>
             </div>
           </div>
           <LogoutButton />

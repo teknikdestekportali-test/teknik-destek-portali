@@ -1,5 +1,4 @@
 import { Resend } from 'resend';
-import { priceBreakdown } from './pricing';
 
 function getResend() {
   return new Resend(process.env.RESEND_API_KEY ?? 're_placeholder');
@@ -10,9 +9,13 @@ const WORKSHOP_EMAIL = process.env.WORKSHOP_EMAIL ?? 'atolye@demo.com';
 const KKM_EMAIL = process.env.KKM_EMAIL ?? 'kkm@demo.com';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 
-// Tüm mailleri tek adrese yönlendir (demo/test modu)
 function to(address: string): string {
   return process.env.OVERRIDE_RECIPIENT ?? address;
+}
+
+// Unified subject for all emails — item 1
+function subject(refNumber: string): string {
+  return `[${refNumber}] Referanslı Teknik Destek Talebi Hk.`;
 }
 
 function wrap(title: string, body: string): string {
@@ -33,6 +36,7 @@ function wrap(title: string, body: string): string {
     .info-box { background: #f8fafc; border-left: 4px solid #3b82f6; border-radius: 4px; padding: 16px; margin: 16px 0; }
     .price-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 20px; margin: 16px 0; }
     .price-total { font-size: 24px; font-weight: 700; color: #16a34a; }
+    .warning-box { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 16px; margin: 16px 0; font-size: 13px; color: #92400e; }
     .btn { display: inline-block; padding: 12px 28px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; margin: 8px 8px 8px 0; }
     .btn-accept { background: #16a34a; color: #fff; }
     .btn-reject { background: #dc2626; color: #fff; }
@@ -45,7 +49,7 @@ function wrap(title: string, body: string): string {
 <body>
   <div class="container">
     <div class="header">
-      <h1>✈ Tamirat Talep Portalı</h1>
+      <h1>✈ Teknik Destek Talep Portalı</h1>
       <p>${title}</p>
     </div>
     <div class="body">${body}</div>
@@ -77,6 +81,7 @@ function requestTable(req: {
   </table>`;
 }
 
+// item 6, 7
 export async function sendCustomerConfirmation(req: {
   customer_email: string;
   customer_name: string;
@@ -88,14 +93,14 @@ export async function sendCustomerConfirmation(req: {
 }) {
   const body = `
     <p>Sayın <strong>${req.customer_name}</strong>,</p>
-    <p>Hizmet talebiniz başarıyla alınmıştır. Talebiniz en kısa sürede ilgili atölye tarafından değerlendirilecek ve tarafınıza bilgi verilecektir.</p>
+    <p>Hizmet talebiniz başarıyla alınmıştır. Talebiniz en kısa sürede ilgili yetkili tarafından değerlendirilecek ve tarafınıza bilgi verilecektir.</p>
     <div class="info-box">${requestTable(req)}</div>
-    <p>Gelişmeler hakkında bu e-posta adresine bildirim alacaksınız.</p>
+    <p>Talebinize dair gelişmeler bu e-posta adresi üzerinden tarafınıza iletilecektir.</p>
   `;
   return getResend().emails.send({
     from: FROM,
     to: to(req.customer_email),
-    subject: `[${req.ref_number}] Talebiniz Alındı`,
+    subject: subject(req.ref_number),
     html: wrap('Talep Onayı', body),
   });
 }
@@ -119,7 +124,7 @@ export async function sendWorkshopNewRequest(req: {
   return getResend().emails.send({
     from: FROM,
     to: to(WORKSHOP_EMAIL),
-    subject: `[${req.ref_number}] Yeni Hizmet Talebi — ${req.customer_company} / ${req.service_type}`,
+    subject: subject(req.ref_number),
     html: wrap('Yeni Talep Bildirimi', body),
   });
 }
@@ -132,7 +137,7 @@ export async function sendCustomerRejected(req: {
 }) {
   const body = `
     <p>Sayın <strong>${req.customer_name}</strong>,</p>
-    <p>Talebiniz incelenmiş olup mevcut atölye kapasitesi nedeniyle şu an karşılanamamaktadır.</p>
+    <p>Talebiniz incelenmiş olup mevcut kapasite nedeniyle şu an karşılanamamaktadır.</p>
     <div class="info-box">
       <strong>Referans:</strong> ${req.ref_number}<br/>
       <strong>Açıklama:</strong> ${req.rejection_reason}
@@ -142,7 +147,7 @@ export async function sendCustomerRejected(req: {
   return getResend().emails.send({
     from: FROM,
     to: to(req.customer_email),
-    subject: `[${req.ref_number}] Talep Sonucu Hakkında`,
+    subject: subject(req.ref_number),
     html: wrap('Talep Güncelleme', body),
   });
 }
@@ -157,7 +162,7 @@ export async function sendCustomerInfoRequest(req: {
   const link = `${APP_URL}/request/${req.request_id}/respond`;
   const body = `
     <p>Sayın <strong>${req.customer_name}</strong>,</p>
-    <p>Talebinizin değerlendirilebilmesi için atölyemiz aşağıdaki ek bilgi veya belgelere ihtiyaç duymaktadır.</p>
+    <p>Talebinizin değerlendirilebilmesi için aşağıdaki ek bilgi veya belgelere ihtiyaç duyulmaktadır.</p>
     <div class="info-box">
       <strong>Referans:</strong> ${req.ref_number}<br/><br/>
       <strong>İstenen Bilgi/Belge:</strong><br/>
@@ -169,11 +174,12 @@ export async function sendCustomerInfoRequest(req: {
   return getResend().emails.send({
     from: FROM,
     to: to(req.customer_email),
-    subject: `[${req.ref_number}] Ek Bilgi/Belge Talebi`,
-    html: wrap('Ek Bilgi Gerekli', body),
+    subject: subject(req.ref_number),
+    html: wrap('Ek Bilgi Talebi', body),
   });
 }
 
+// item 21 — T&M uyarısı, kırılımsız fiyat (USD)
 export async function sendCustomerQuote(req: {
   customer_email: string;
   customer_name: string;
@@ -197,8 +203,8 @@ export async function sendCustomerQuote(req: {
     <div class="price-box">
       <p style="margin:0 0 12px;font-weight:600;color:#15803d">Fiyat Teklifi</p>
       <table>
-        <tr style="border-top:1px solid #86efac">
-          <td style="font-weight:700;padding-top:8px">Teklif Tutarı</td>
+        <tr>
+          <td style="font-weight:700">Teklif Tutarı</td>
           <td class="price-total">${req.price.toLocaleString('en-US')} USD</td>
         </tr>
         <tr>
@@ -206,6 +212,9 @@ export async function sendCustomerQuote(req: {
           <td style="font-weight:600;padding-top:8px">${req.tat_days} iş günü</td>
         </tr>
       </table>
+    </div>
+    <div class="warning-box">
+      ⚠️ <strong>Önemli Not:</strong> Talep ettiğiniz işlemler dışında bir ek tamir gereksinimi halinde fiyatlama ekli T&M tablosuna göre yapılacaktır.
     </div>
     <p>Teklife yanıt vermek için aşağıdaki butonları kullanabilirsiniz:</p>
     <p>
@@ -217,11 +226,12 @@ export async function sendCustomerQuote(req: {
   return getResend().emails.send({
     from: FROM,
     to: to(req.customer_email),
-    subject: `[${req.ref_number}] Fiyat Teklifiniz Hazır — ${req.price.toLocaleString('en-US')} USD`,
+    subject: subject(req.ref_number),
     html: wrap('Fiyat Teklifi', body),
   });
 }
 
+// items 13, 14 — combined workshop + KKM email
 export async function sendQuoteAcceptedCombined(req: {
   ref_number: string;
   customer_company: string;
@@ -248,29 +258,27 @@ export async function sendQuoteAcceptedCombined(req: {
 
   const body = `
     <p>Sayın <strong>${req.service_type}</strong> Atölyesi,</p>
-    <p>Aşağıda detayları verilen teklif müşterimiz tarafından kabul edilmiştir. Parçanın işleme alınması için bilginize sunulur.</p>
+    <p>Aşağıda detayları verilen teklif müşterimiz tarafından kabul edilmiştir. İş emri açıldığında işlemlere başlanabilir.</p>
     <div class="info-box">${detailTable}</div>
     <p><a href="${workshopLink}" class="btn btn-accept">Talebi Görüntüle →</a></p>
 
     <hr style="border:none;border-top:2px dashed #e2e8f0;margin:32px 0;" />
 
     <p>Sayın KKM,</p>
-    <p>Aşağıda detayları verilen referansa istinaden iş emri açılması talebi bilginize sunulur.</p>
+    <p>Aşağıda detayları verilen referansa istinaden iş emri açabilir misiniz? Teşekkürler.</p>
     <div class="info-box">${detailTable}</div>
     <p><a href="${kkmLink}" class="btn btn-accept" style="background:#059669">İş Emri Gir →</a></p>
   `;
 
   const recipients = [...new Set([to(WORKSHOP_EMAIL), to(KKM_EMAIL)])];
-
   return getResend().emails.send({
     from: FROM,
     to: recipients,
-    subject: `[${req.ref_number}] Teklif Kabul Edildi — ${req.customer_company} / ${req.service_type}`,
+    subject: subject(req.ref_number),
     html: wrap('Teklif Kabul & İş Emri Bildirimi', body),
   });
 }
 
-// Keep for backward compatibility
 export async function sendWorkshopQuoteAccepted(req: {
   ref_number: string; customer_company: string; customer_name: string;
   service_type: string; priority: string; price: number; request_id: string;
@@ -287,7 +295,6 @@ export async function sendWorkshopWorkOrderNotification(req: {
   service_type: string;
   request_id: string;
 }) {
-  const link = `${APP_URL}/workshop/request/${req.request_id}`;
   const body = `
     <p>Sayın Atölyemiz,</p>
     <p>
@@ -302,13 +309,40 @@ export async function sendWorkshopWorkOrderNotification(req: {
         <tr><td>Hizmet Türü</td><td>${req.service_type}</td></tr>
       </table>
     </div>
-    <p><a href="${link}" class="btn btn-accept">Talebi Görüntüle →</a></p>
   `;
   return getResend().emails.send({
     from: FROM,
     to: to(WORKSHOP_EMAIL),
-    subject: `[${req.ref_number}] İş Emri Açıldı — ${req.work_order_number}`,
+    subject: subject(req.ref_number),
     html: wrap('İş Emri Bildirimi', body),
+  });
+}
+
+// item 20 — customer work order notification
+export async function sendCustomerWorkOrderOpened(req: {
+  customer_email: string;
+  customer_name: string;
+  ref_number: string;
+}) {
+  const body = `
+    <p>Sayın <strong>${req.customer_name}</strong>,</p>
+    <p>Talebiniz için gerekli iş emri açılmıştır. Atölyeye parça gönderimi gerekiyorsa aşağıdaki adreslerden size uygun olanına parçaları teslim edebilirsiniz. Ardından parçanın durumunu <a href="mailto:cms@thy.com">cms@thy.com</a> adresinden sorgulatabilirsiniz.</p>
+    <div class="info-box">
+      <p style="margin:0 0 8px;font-weight:600">Tesellüm Noktaları</p>
+      <p style="margin:4px 0">🏢 <strong>ISL Tesellüm</strong></p>
+      <p style="margin:4px 0">🏢 <strong>SAW Tesellüm</strong></p>
+    </div>
+    <div class="info-box">
+      <table>
+        <tr><td>Talep Referansı</td><td><strong>${req.ref_number}</strong></td></tr>
+      </table>
+    </div>
+  `;
+  return getResend().emails.send({
+    from: FROM,
+    to: to(req.customer_email),
+    subject: subject(req.ref_number),
+    html: wrap('İş Emri Açıldı', body),
   });
 }
 
@@ -324,20 +358,20 @@ export async function sendBillingNotification(req: {
       <strong>${req.ref_number}</strong> referanslı hizmet talebine istinaden 
       <strong>${req.work_order_number}</strong> numaralı iş emri açılmıştır. 
       İş emrinin kapanmasını takiben müşterimize 
-      <strong>${req.price.toLocaleString('tr-TR')} USD</strong> tutarında fatura kesilmesi için bilginize arz ederiz.
+      <strong>${req.price.toLocaleString('en-US')} USD</strong> tutarında fatura kesilmesi için bilginize arz ederiz.
     </p>
     <div class="info-box">
       <table>
         <tr><td>Talep Referansı</td><td><strong>${req.ref_number}</strong></td></tr>
         <tr><td>İş Emri No</td><td><strong>${req.work_order_number}</strong></td></tr>
-        <tr><td>Fatura Tutarı</td><td><strong>${req.price.toLocaleString('tr-TR')} USD</strong></td></tr>
+        <tr><td>Fatura Tutarı</td><td><strong>${req.price.toLocaleString('en-US')} USD</strong></td></tr>
       </table>
     </div>
   `;
   return getResend().emails.send({
     from: FROM,
     to: to(BILLING_EMAIL),
-    subject: `[${req.ref_number}] Faturalama Bildirimi — İş Emri ${req.work_order_number}`,
+    subject: subject(req.ref_number),
     html: wrap('Faturalama Bildirimi', body),
   });
 }
@@ -361,7 +395,7 @@ export async function sendWorkshopQuoteRejected(req: {
   return getResend().emails.send({
     from: FROM,
     to: to(WORKSHOP_EMAIL),
-    subject: `[${req.ref_number}] Teklif Reddedildi`,
+    subject: subject(req.ref_number),
     html: wrap('Teklif Red Bildirimi', body),
   });
 }
@@ -375,7 +409,7 @@ export async function sendWorkshopInfoResponse(req: {
 }) {
   const link = `${APP_URL}/workshop/request/${req.request_id}`;
   const body = `
-    <p><strong>${req.customer_company}</strong> firması eksik bilgi talebinize yanıt vermiştir.</p>
+    <p><strong>${req.customer_company}</strong> firması ek bilgi talebinize yanıt vermiştir.</p>
     <div class="info-box">
       <strong>Referans:</strong> ${req.ref_number}<br/>
       <strong>Yanıt Veren:</strong> ${req.customer_name}<br/><br/>
@@ -387,7 +421,7 @@ export async function sendWorkshopInfoResponse(req: {
   return getResend().emails.send({
     from: FROM,
     to: to(WORKSHOP_EMAIL),
-    subject: `[${req.ref_number}] Müşteri Yanıtı Alındı`,
+    subject: subject(req.ref_number),
     html: wrap('Müşteri Yanıtı', body),
   });
 }

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Tamirat Talep Portalı',
+  title: 'Teknik Destek Talep Portalı',
   description: 'MRO Hizmet Talep Yönetim Sistemi',
 };
 

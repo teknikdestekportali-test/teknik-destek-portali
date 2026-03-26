@@ -72,7 +72,7 @@ export default function CustomerRespondPage({ params }: { params: Promise<{ id: 
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-blue-500 rounded-lg flex items-center justify-center text-lg">✈</div>
             <div>
-              <h1 className="font-bold">Tamirat Talep Portalı</h1>
+              <h1 className="font-bold">Teknik Destek Talep Portalı</h1>
               <p className="text-slate-400 text-xs">Ek Bilgi Yanıtı</p>
             </div>
           </div>

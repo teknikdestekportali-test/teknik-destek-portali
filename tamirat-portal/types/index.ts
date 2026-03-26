@@ -22,7 +22,7 @@ export const STATUS_LABELS: Record<RequestStatus, string> = {
   accepted: 'Kabul Edildi',
   rejected_by_customer: 'Müşteri Reddetti',
   work_order: 'İş Emri Bekleniyor',
-  invoicing: 'Faturalama',
+  invoicing: 'İş Emri Açıldı',
 };
 
 export const STATUS_COLORS: Record<RequestStatus, string> = {
