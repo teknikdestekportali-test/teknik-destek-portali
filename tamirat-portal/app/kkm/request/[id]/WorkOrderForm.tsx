@@ -50,7 +50,7 @@ export default function WorkOrderForm({ requestId }: { requestId: string }) {
       <button
         type="submit"
         disabled={loading || !workOrderNumber.trim()}
-        className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
+        className="w-full bg-slate-900 hover:bg-slate-700 disabled:opacity-50 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
       >
         {loading ? 'İşleniyor...' : 'Onayla →'}
       </button>

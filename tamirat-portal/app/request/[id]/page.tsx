@@ -71,7 +71,7 @@ export default function CustomerRequestStatusPage({ params }: { params: Promise<
         {done && (
           <div className={`mb-6 p-4 rounded-xl border ${done === 'accepted' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-slate-50 border-slate-200 text-slate-700'}`}>
             {done === 'accepted'
-              ? '✓ Teklif kabul edildi. Atölye ve KKM ekibi bilgilendirildi. İş emri süreci başlatılıyor.'
+              ? '✓ Teklif kabul edildi. Atölye ve ilgili ekipler bilgilendirildi. İş emri süreci başlatılıyor. İş emri açıldığında eğer gerekliyse parçaları teslim edebilirsiniz.'
               : 'Teklif reddedildi. Talebiniz kapatılmıştır.'}
           </div>
         )}
@@ -143,16 +143,16 @@ export default function CustomerRequestStatusPage({ params }: { params: Promise<
                   <button
                     onClick={() => handleAction('accept')}
                     disabled={actionLoading}
-                    className="flex-1 bg-green-600 text-white font-semibold py-3 rounded-xl hover:bg-green-700 disabled:opacity-50 transition-colors text-sm"
+                    className="flex-1 bg-slate-900 text-white font-semibold py-3 rounded-xl hover:bg-slate-700 disabled:opacity-50 transition-colors text-sm"
                   >
-                    {actionLoading ? '...' : '✓ Teklifi Kabul Et'}
+                    {actionLoading ? '...' : 'Teklifi Kabul Et'}
                   </button>
                   <button
                     onClick={() => handleAction('reject')}
                     disabled={actionLoading}
-                    className="flex-1 bg-red-600 text-white font-semibold py-3 rounded-xl hover:bg-red-700 disabled:opacity-50 transition-colors text-sm"
+                    className="flex-1 bg-white border border-slate-300 text-slate-600 font-semibold py-3 rounded-xl hover:border-red-300 hover:text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors text-sm"
                   >
-                    {actionLoading ? '...' : '✗ Teklifi Reddet'}
+                    {actionLoading ? '...' : 'Teklifi Reddet'}
                   </button>
                 </div>
               )}

@@ -38,8 +38,8 @@ function wrap(title: string, body: string): string {
     .price-total { font-size: 24px; font-weight: 700; color: #16a34a; }
     .warning-box { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 16px; margin: 16px 0; font-size: 13px; color: #92400e; }
     .btn { display: inline-block; padding: 12px 28px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; margin: 8px 8px 8px 0; }
-    .btn-accept { background: #16a34a; color: #fff; }
-    .btn-reject { background: #dc2626; color: #fff; }
+    .btn-accept { background: #0f172a; color: #fff; }
+    .btn-reject { background: #fff; color: #dc2626; border: 1px solid #fca5a5; }
     .footer { background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 16px 32px; font-size: 12px; color: #94a3b8; }
     table { width: 100%; border-collapse: collapse; }
     td { padding: 8px 0; vertical-align: top; }
