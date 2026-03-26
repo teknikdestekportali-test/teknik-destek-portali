@@ -91,7 +91,7 @@ export default async function KKMDashboardPage() {
                       </td>
                       <td className="px-6 py-4">
                         {req.status === 'work_order' && (
-                          <a href={`/kkm/request/${req.id}`} className="text-emerald-600 hover:text-emerald-800 font-medium text-xs">
+                          <a href={`/kkm/request/${req.id}`} className="inline-block bg-slate-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-slate-700 transition-colors">
                             İş Emri Gir →
                           </a>
                         )}

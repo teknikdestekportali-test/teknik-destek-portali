@@ -114,7 +114,7 @@ export default function CustomerRequestStatusPage({ params }: { params: Promise<
           <div className="bg-orange-50 border border-orange-200 rounded-2xl p-6 mt-5">
             <h3 className="font-semibold text-orange-800 mb-2">Atölye Ek Bilgi Talep Ediyor</h3>
             <p className="text-sm text-orange-700 mb-4">{evaluation.info_request_text}</p>
-            <a href={`/request/${id}/respond`} className="inline-block bg-orange-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-orange-700 transition-colors">
+            <a href={`/request/${id}/respond`} className="inline-block bg-slate-900 text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-slate-700 transition-colors">
               Yanıt Ver →
             </a>
           </div>

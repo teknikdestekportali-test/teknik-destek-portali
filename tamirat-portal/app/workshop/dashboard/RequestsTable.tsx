@@ -53,7 +53,11 @@ export default function RequestsTable({ requests }: { requests: ServiceRequest[]
               <td className="px-6 py-4 text-slate-400 text-xs">
                 {new Date(req.created_at).toLocaleDateString('tr-TR')}
               </td>
-              <td className="px-6 py-4 text-blue-400 text-lg">→</td>
+              <td className="px-6 py-4">
+                <span className="inline-block bg-slate-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-slate-700 transition-colors">
+                  İncele →
+                </span>
+              </td>
             </tr>
           ))}
         </tbody>
