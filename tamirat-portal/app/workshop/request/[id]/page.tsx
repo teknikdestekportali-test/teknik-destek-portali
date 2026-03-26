@@ -184,7 +184,7 @@ export default async function WorkshopRequestDetailPage({ params }: { params: Pr
             ) : (
               <div className="bg-white rounded-2xl border border-slate-200 p-6">
                 <p className="text-sm text-slate-500 text-center py-4">
-                  Bu talep <strong>{STATUS_LABELS[request.status]}</strong> durumunda. Değerlendirme tamamlandı.
+                  Değerlendirme ilgili ekibe iletilmiştir.
                 </p>
               </div>
             )}

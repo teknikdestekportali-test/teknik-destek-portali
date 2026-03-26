@@ -140,7 +140,7 @@ export default function CustomerRespondPage({ params }: { params: Promise<{ id: 
               <button
                 type="submit"
                 disabled={submitting || !text.trim()}
-                className="flex-1 bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 disabled:opacity-50 transition-colors text-sm"
+                className="flex-1 bg-slate-900 text-white font-semibold py-3 rounded-xl hover:bg-slate-700 disabled:opacity-50 transition-colors text-sm"
               >
                 {submitting ? 'Gönderiliyor...' : 'Yanıtı Gönder →'}
               </button>
