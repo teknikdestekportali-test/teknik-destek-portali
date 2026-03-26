@@ -67,7 +67,7 @@ export default function EvaluationForm({ requestId, priority }: Props) {
         <div className="space-y-2 mb-5">
           {([
             { key: 'quoted', label: 'Değerlendirmeyi Paylaş', color: 'border-slate-900 bg-slate-900 text-white', inactive: 'border-slate-200 text-slate-600 hover:border-slate-400' },
-            { key: 'info_requested', label: 'Ek Bilgi İste', color: 'border-amber-500 bg-amber-50 text-amber-800', inactive: 'border-slate-200 text-slate-600 hover:border-slate-400' },
+            { key: 'info_requested', label: 'Ek Bilgi İste', color: 'border-slate-700 bg-slate-100 text-slate-900', inactive: 'border-slate-200 text-slate-600 hover:border-slate-400' },
             { key: 'rejected', label: 'Reddet', color: 'border-slate-300 bg-white text-red-600', inactive: 'border-slate-200 text-slate-600 hover:border-slate-400' },
           ] as const).map((opt) => (
             <button
@@ -147,7 +147,7 @@ export default function EvaluationForm({ requestId, priority }: Props) {
             disabled={loading}
             className={`w-full font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50 ${
               action === 'quoted' ? 'bg-slate-900 hover:bg-slate-700 text-white'
-              : action === 'info_requested' ? 'bg-amber-500 hover:bg-amber-600 text-white'
+              : action === 'info_requested' ? 'bg-slate-800 hover:bg-slate-700 text-white'
               : 'bg-white border border-slate-300 text-red-600 hover:bg-red-50 hover:border-red-300'
             }`}
           >
